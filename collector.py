@@ -13,10 +13,7 @@ SERIAL_PORT = "COM9"
 BAUD_RATE = 115200
 
 # Put your Render URL here after deployment
-SERVER_URL = os.getenv(
-    "MARSLINK_SERVER",
-    "MARSLINK_SERVER=https://marslink-dashboard.onrender.com"
-)
+SERVER_URL = "https://marslink-dashboard.onrender.com"
 
 # Must match Render's INGEST_TOKEN
 INGEST_TOKEN = os.getenv(
