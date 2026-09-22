@@ -15,13 +15,13 @@ BAUD_RATE = 115200
 # Put your Render URL here after deployment
 SERVER_URL = os.getenv(
     "MARSLINK_SERVER",
-    "https://YOUR-APP.onrender.com"
+    "MARSLINK_SERVER=https://marslink-dashboard.onrender.com"
 )
 
 # Must match Render's INGEST_TOKEN
 INGEST_TOKEN = os.getenv(
     "MARSLINK_TOKEN",
-    ""
+    "marslink-secret-2026"
 )
 
 
