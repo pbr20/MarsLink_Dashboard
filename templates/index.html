@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -6,8 +7,9 @@
 <meta charset="UTF-8">
 
 <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+
 >
 
 <title>MarsLink Mission Control</title>
@@ -615,14 +617,14 @@ button.primary {
 
 .events {
 
-    max-height: 260px;
+    max-height: 300px;
 
     overflow-y: auto;
 }
 
 .event {
 
-    padding: 11px 0;
+    padding: 12px 4px;
 
     border-bottom:
         1px solid var(--border);
@@ -630,6 +632,76 @@ button.primary {
     color: #c8c2c2;
 
     font-size: 12px;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+.event:last-child {
+
+    border-bottom: none;
+}
+
+.event-icon {
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+
+    display: grid;
+
+    place-items: center;
+
+    flex-shrink: 0;
+
+    font-size: 12px;
+}
+
+.event-online .event-icon {
+
+    background:
+        rgba(74,222,128,0.12);
+
+}
+
+.event-offline .event-icon {
+
+    background:
+        rgba(251,113,133,0.12);
+
+}
+
+.event-system .event-icon {
+
+    background:
+        rgba(251,191,36,0.12);
+
+}
+
+.event-content {
+
+    flex: 1;
+}
+
+.event-message {
+
+    color: #eee;
+
+    font-weight: 600;
+
+}
+
+.event-time {
+
+    color: #777;
+
+    font-size: 10px;
+
+    margin-top: 3px;
 }
 
 .footer {
@@ -721,259 +793,268 @@ button.primary {
 
 </head>
 
-
 <body>
-
 
 <header>
 
-    <div class="brand">
+```
+<div class="brand">
 
-        <div class="logo">
-            🚀
-        </div>
-
-        <div>
-
-            <h1>
-                MarsLink
-            </h1>
-
-            <div class="subtitle">
-                LoRa Environmental Monitoring Network
-            </div>
-
-        </div>
-
+    <div class="logo">
+        🚀
     </div>
 
+    <div>
 
-    <div
-        class="status-pill"
-        id="networkPill"
-    >
+        <h1>
+            MarsLink
+        </h1>
 
-        <span
-            class="dot"
-            id="networkDot"
-        ></span>
-
-        <span id="networkText">
-            Connecting...
-        </span>
-
-    </div>
-
-</header>
-
-
-
-<div class="container">
-
-
-    <section class="hero">
-
-        <div class="hero-content">
-
-            <div class="eyebrow">
-                Mars Surface Mission Control
-            </div>
-
-            <h2>
-                Environmental Telemetry
-            </h2>
-
-            <p>
-                Real-time monitoring of temperature,
-                dust concentration and LoRa link quality
-                across the MarsLink sensor network.
-            </p>
-
+        <div class="subtitle">
+            LoRa Environmental Monitoring Network
         </div>
-
-    </section>
-
-
-
-    <!-- OVERVIEW -->
-
-    <div class="grid">
-
-        <div class="card">
-
-            <div class="metric-label">
-                Network
-            </div>
-
-            <div
-                class="metric"
-                id="networkStatus"
-            >
-                --
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="metric-label">
-                Online Nodes
-            </div>
-
-            <div
-                class="metric"
-                id="onlineNodes"
-            >
-                --
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="metric-label">
-                Last Update
-            </div>
-
-            <div
-                class="metric"
-                id="lastUpdate"
-                style="font-size:18px"
-            >
-                --
-            </div>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="metric-label">
-                Gateway
-            </div>
-
-            <div class="metric">
-                MASTER
-            </div>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- LIVE NODES -->
-
-    <div class="section-title">
-
-        <span>
-            Live Sensor Nodes
-        </span>
-
-        <span
-            class="metric-label"
-            id="liveLabel"
-        >
-            LIVE
-        </span>
-
-    </div>
-
-
-    <div
-        class="node-grid"
-        id="nodes"
-    ></div>
-
-
-
-    <!-- HISTORY -->
-
-    <section class="archive">
-
-        <div class="section-title">
-
-            <span>
-                Data Archive
-            </span>
-
-            <span
-                class="metric-label"
-                id="archiveStatus"
-            >
-                Select a date
-            </span>
-
-        </div>
-
-
-        <div class="card">
-
-            <div class="archive-controls">
-
-                <input
-                    type="date"
-                    id="historyDate"
-                >
-
-                <button
-                    class="primary"
-                    onclick="loadHistory()"
-                >
-                    Load Day
-                </button>
-
-                <button
-                    onclick="selectToday()"
-                >
-                    Today
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div
-            class="history-grid"
-            id="historyNodes"
-        ></div>
-
-    </section>
-
-
-
-    <!-- EVENTS -->
-
-    <div class="section-title">
-        Network Events
-    </div>
-
-
-    <div
-        class="card events"
-        id="events"
-    >
-
-        <div class="empty">
-            Waiting for events...
-        </div>
-
-    </div>
-
-
-    <div class="footer">
-
-        MarsLink • ESP32 + LoRa 433 MHz
-        • Environmental Monitoring System
 
     </div>
 
 </div>
 
 
+<div
+    class="status-pill"
+    id="networkPill"
+>
+
+    <span
+        class="dot"
+        id="networkDot"
+    ></span>
+
+    <span id="networkText">
+        Connecting...
+    </span>
+
+</div>
+```
+
+</header>
+
+<div class="container">
+
+```
+<section class="hero">
+
+    <div class="hero-content">
+
+        <div class="eyebrow">
+            Mars Surface Mission Control
+        </div>
+
+        <h2>
+            Environmental Telemetry
+        </h2>
+
+        <p>
+            Real-time monitoring of temperature,
+            dust concentration and LoRa link quality
+            across the MarsLink sensor network.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- OVERVIEW -->
+
+<div class="grid">
+
+    <div class="card">
+
+        <div class="metric-label">
+            Network
+        </div>
+
+        <div
+            class="metric"
+            id="networkStatus"
+        >
+            --
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="metric-label">
+            Online Nodes
+        </div>
+
+        <div
+            class="metric"
+            id="onlineNodes"
+        >
+            --
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="metric-label">
+            Last Update
+        </div>
+
+        <div
+            class="metric"
+            id="lastUpdate"
+            style="font-size:18px"
+        >
+            --
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="metric-label">
+            Gateway
+        </div>
+
+        <div class="metric">
+            MASTER
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- LIVE NODES -->
+
+<div class="section-title">
+
+    <span>
+        Live Sensor Nodes
+    </span>
+
+    <span
+        class="metric-label"
+        id="liveLabel"
+    >
+        LIVE
+    </span>
+
+</div>
+
+
+<div
+    class="node-grid"
+    id="nodes"
+></div>
+
+
+
+<!-- HISTORY -->
+
+<section class="archive">
+
+    <div class="section-title">
+
+        <span>
+            Data Archive
+        </span>
+
+        <span
+            class="metric-label"
+            id="archiveStatus"
+        >
+            Select a date
+        </span>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="archive-controls">
+
+            <input
+                type="date"
+                id="historyDate"
+            >
+
+            <button
+                class="primary"
+                onclick="loadHistory()"
+            >
+                Load Day
+            </button>
+
+            <button
+                onclick="selectToday()"
+            >
+                Today
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="history-grid"
+        id="historyNodes"
+    ></div>
+
+</section>
+
+
+
+<!-- EVENTS -->
+
+<div class="section-title">
+
+    <span>
+        Network Events
+    </span>
+
+    <span
+        class="metric-label"
+        id="eventCount"
+    >
+        0 EVENTS
+    </span>
+
+</div>
+
+
+<div
+    class="card events"
+    id="events"
+>
+
+    <div class="empty">
+        Waiting for events...
+    </div>
+
+</div>
+
+
+
+<div class="footer">
+
+    MarsLink • ESP32 + LoRa 433 MHz
+    • Environmental Monitoring System
+
+</div>
+```
+
+</div>
 
 <script>
 
@@ -982,15 +1063,230 @@ const historyCharts = {};
 
 
 // ---------------------------------------------------------
+// EVENT SYSTEM
+// ---------------------------------------------------------
+
+let previousNodeStates = {};
+
+let networkEvents = [];
+
+const MAX_EVENTS = 30;
+
+
+// Add an event to the event list
+
+function addEvent(
+    message,
+    type = "system",
+    icon = "ℹ️"
+) {
+
+    const now = new Date();
+
+    const time =
+        now.toLocaleTimeString(
+            [],
+            {
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            }
+        );
+
+
+    networkEvents.unshift({
+
+        message: message,
+
+        type: type,
+
+        icon: icon,
+
+        time: time
+
+    });
+
+
+    // Keep only latest 30 events
+
+    if (
+        networkEvents.length >
+        MAX_EVENTS
+    ) {
+
+        networkEvents =
+            networkEvents.slice(
+                0,
+                MAX_EVENTS
+            );
+    }
+
+
+    renderEvents();
+}
+
+
+// Render events on screen
+
+function renderEvents() {
+
+    const container =
+        document.getElementById(
+            "events"
+        );
+
+
+    const count =
+        document.getElementById(
+            "eventCount"
+        );
+
+
+    count.textContent =
+        `${networkEvents.length} EVENTS`;
+
+
+    if (
+        networkEvents.length === 0
+    ) {
+
+        container.innerHTML =
+            `<div class="empty">
+                Waiting for events...
+            </div>`;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    networkEvents.forEach(
+        event => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "event event-" +
+                event.type;
+
+
+            div.innerHTML = `
+
+                <div class="event-icon">
+                    ${event.icon}
+                </div>
+
+                <div class="event-content">
+
+                    <div class="event-message">
+                        ${event.message}
+                    </div>
+
+                    <div class="event-time">
+                        ${event.time}
+                    </div>
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+        }
+    );
+}
+
+
+// Check whether a node changed state
+
+function checkNodeEvents(
+    nodes
+) {
+
+    for (
+        const [id, node]
+        of Object.entries(nodes)
+    ) {
+
+        const currentStatus =
+            node.status;
+
+
+        const previousStatus =
+            previousNodeStates[id];
+
+
+        // First time seeing the node
+
+        if (
+            previousStatus === undefined
+        ) {
+
+            previousNodeStates[id] =
+                currentStatus;
+
+            continue;
+        }
+
+
+        // OFFLINE -> ONLINE
+
+        if (
+            previousStatus !== "Online" &&
+            currentStatus === "Online"
+        ) {
+
+            addEvent(
+                `${node.name} is back online`,
+                "online",
+                "🟢"
+            );
+        }
+
+
+        // ONLINE -> OFFLINE
+
+        if (
+            previousStatus === "Online" &&
+            currentStatus !== "Online"
+        ) {
+
+            addEvent(
+                `${node.name} went offline`,
+                "offline",
+                "🔴"
+            );
+        }
+
+
+        previousNodeStates[id] =
+            currentStatus;
+    }
+}
+
+
+// ---------------------------------------------------------
 // HELPERS
 // ---------------------------------------------------------
 
-function value(v, suffix = "") {
+function value(
+    v,
+    suffix = ""
+) {
 
     if (
         v === null ||
         v === undefined
     ) {
+
         return "--";
     }
 
@@ -1000,20 +1296,31 @@ function value(v, suffix = "") {
 
 function todayString() {
 
-    const d = new Date();
+    const d =
+        new Date();
+
 
     const year =
         d.getFullYear();
 
+
     const month =
         String(
             d.getMonth() + 1
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     const day =
         String(
             d.getDate()
-        ).padStart(2, "0");
+        ).padStart(
+            2,
+            "0"
+        );
+
 
     return `${year}-${month}-${day}`;
 }
@@ -1023,7 +1330,9 @@ function selectToday() {
 
     document.getElementById(
         "historyDate"
-    ).value = todayString();
+    ).value =
+        todayString();
+
 
     loadHistory();
 }
@@ -1033,14 +1342,24 @@ function selectToday() {
 // LIVE NODE CARDS
 // ---------------------------------------------------------
 
-function createLiveNode(id, node) {
+function createLiveNode(
+    id,
+    node
+) {
 
     const card =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
-    card.className = "card";
 
-    card.id = "node-" + id;
+    card.className =
+        "card";
+
+
+    card.id =
+        "node-" + id;
+
 
     card.innerHTML = `
 
@@ -1155,15 +1474,22 @@ function createLiveNode(id, node) {
 
     `;
 
+
     document
-        .getElementById("nodes")
+        .getElementById(
+            "nodes"
+        )
         .appendChild(card);
 
 
     const ctx =
         card
-            .querySelector("canvas")
-            .getContext("2d");
+            .querySelector(
+                "canvas"
+            )
+            .getContext(
+                "2d"
+            );
 
 
     liveCharts[id] =
@@ -1180,6 +1506,7 @@ function createLiveNode(id, node) {
                     datasets: [
 
                         {
+
                             label:
                                 "Temperature °C",
 
@@ -1191,13 +1518,17 @@ function createLiveNode(id, node) {
                             backgroundColor:
                                 "rgba(255,139,104,0.08)",
 
-                            tension: 0.35,
+                            tension:
+                                0.35,
 
-                            yAxisID: "temp"
+                            yAxisID:
+                                "temp"
 
                         },
 
+
                         {
+
                             label:
                                 "Dust µg/m³",
 
@@ -1209,9 +1540,11 @@ function createLiveNode(id, node) {
                             backgroundColor:
                                 "transparent",
 
-                            tension: 0.35,
+                            tension:
+                                0.35,
 
-                            yAxisID: "dust"
+                            yAxisID:
+                                "dust"
 
                         }
 
@@ -1219,92 +1552,114 @@ function createLiveNode(id, node) {
 
                 },
 
+
                 options: {
 
-                    responsive: true,
+                    responsive:
+                        true,
 
-                    maintainAspectRatio: false,
+                    maintainAspectRatio:
+                        false,
 
                     interaction: {
-                        mode: "index",
-                        intersect: false
+
+                        mode:
+                            "index",
+
+                        intersect:
+                            false
                     },
+
 
                     plugins: {
 
                         legend: {
+
                             labels: {
-                                color: "#aaa"
+
+                                color:
+                                    "#aaa"
                             }
                         }
-
                     },
+
 
                     scales: {
 
                         x: {
 
                             ticks: {
-                                color: "#888",
-                                maxTicksLimit: 8
+
+                                color:
+                                    "#888",
+
+                                maxTicksLimit:
+                                    8
                             },
 
+
                             grid: {
+
                                 color:
                                     "rgba(255,255,255,0.04)"
                             }
-
                         },
+
 
                         temp: {
 
-                            position: "left",
+                            position:
+                                "left",
+
 
                             ticks: {
-                                color: "#ff8b68"
+
+                                color:
+                                    "#ff8b68"
                             },
 
+
                             grid: {
+
                                 color:
                                     "rgba(255,255,255,0.04)"
                             }
-
                         },
+
 
                         dust: {
 
-                            position: "right",
+                            position:
+                                "right",
+
 
                             ticks: {
-                                color: "#fbbf24"
+
+                                color:
+                                    "#fbbf24"
                             },
 
+
                             grid: {
-                                drawOnChartArea: false
+
+                                drawOnChartArea:
+                                    false
                             }
-
                         }
-
                     }
-
                 }
-
             }
         );
 }
 
 
 // ---------------------------------------------------------
-// UPDATE LIVE
+// UPDATE LIVE NODES
 // ---------------------------------------------------------
 
-function renderNodes(nodes) {
-
-    const container =
-        document.getElementById(
-            "nodes"
-        );
-
+function renderNodes(
+    nodes
+) {
 
     for (
         const [id, node]
@@ -1323,6 +1678,7 @@ function renderNodes(nodes) {
                 id,
                 node
             );
+
 
             card =
                 document.getElementById(
@@ -1406,6 +1762,11 @@ function renderNodes(nodes) {
             liveCharts[id];
 
 
+        if (!chart) {
+            continue;
+        }
+
+
         chart.data.labels =
             node.history.map(
                 x => x.time
@@ -1424,7 +1785,9 @@ function renderNodes(nodes) {
             );
 
 
-        chart.update("none");
+        chart.update(
+            "none"
+        );
     }
 }
 
@@ -1448,6 +1811,7 @@ async function refresh() {
 
 
         if (data.error) {
+
             throw new Error(
                 data.error
             );
@@ -1512,6 +1876,15 @@ async function refresh() {
         }
 
 
+        // Check node state changes
+
+        checkNodeEvents(
+            data.nodes
+        );
+
+
+        // Update node cards
+
         renderNodes(
             data.nodes
         );
@@ -1530,7 +1903,10 @@ async function refresh() {
         ).textContent =
             "ERROR";
 
-        console.error(error);
+
+        console.error(
+            error
+        );
     }
 }
 
@@ -1577,16 +1953,19 @@ async function loadHistory() {
 
 
         if (data.error) {
+
             throw new Error(
                 data.error
             );
         }
 
 
-        container.innerHTML = "";
+        container.innerHTML =
+            "";
 
 
-        let totalReadings = 0;
+        let totalReadings =
+            0;
 
 
         for (
@@ -1613,7 +1992,9 @@ async function loadHistory() {
             card.innerHTML = `
 
                 <div class="history-title">
+
                     ${node.name}
+
                     <span
                         style="
                         color:#999;
@@ -1623,6 +2004,7 @@ async function loadHistory() {
                     >
                         0x${id}
                     </span>
+
                 </div>
 
 
@@ -1753,7 +2135,9 @@ async function loadHistory() {
                 );
 
 
-            if (historyCharts[id]) {
+            if (
+                historyCharts[id]
+            ) {
 
                 historyCharts[id].destroy();
             }
@@ -1770,12 +2154,14 @@ async function loadHistory() {
 
                             labels:
                                 node.readings.map(
-                                    r => r.time
+                                    r =>
+                                        r.time
                                 ),
 
                             datasets: [
 
                                 {
+
                                     label:
                                         "Temperature °C",
 
@@ -1788,13 +2174,16 @@ async function loadHistory() {
                                     borderColor:
                                         "#ff8b68",
 
-                                    tension: 0.3,
+                                    tension:
+                                        0.3,
 
                                     yAxisID:
                                         "temp"
                                 },
 
+
                                 {
+
                                     label:
                                         "Dust µg/m³",
 
@@ -1807,7 +2196,8 @@ async function loadHistory() {
                                     borderColor:
                                         "#fbbf24",
 
-                                    tension: 0.3,
+                                    tension:
+                                        0.3,
 
                                     yAxisID:
                                         "dust"
@@ -1817,61 +2207,78 @@ async function loadHistory() {
 
                         },
 
+
                         options: {
 
-                            responsive: true,
+                            responsive:
+                                true,
 
-                            maintainAspectRatio: false,
+                            maintainAspectRatio:
+                                false,
+
 
                             scales: {
 
                                 x: {
+
                                     ticks: {
-                                        color: "#888",
-                                        maxTicksLimit: 10
+
+                                        color:
+                                            "#888",
+
+                                        maxTicksLimit:
+                                            10
                                     }
                                 },
+
 
                                 temp: {
 
-                                    position: "left",
+                                    position:
+                                        "left",
 
                                     ticks: {
-                                        color: "#ff8b68"
-                                    }
 
+                                        color:
+                                            "#ff8b68"
+                                    }
                                 },
+
 
                                 dust: {
 
-                                    position: "right",
+                                    position:
+                                        "right",
 
                                     ticks: {
-                                        color: "#fbbf24"
+
+                                        color:
+                                            "#fbbf24"
                                     },
 
-                                    grid: {
-                                        drawOnChartArea: false
-                                    }
 
+                                    grid: {
+
+                                        drawOnChartArea:
+                                            false
+                                    }
                                 }
 
                             },
+
 
                             plugins: {
 
                                 legend: {
 
                                     labels: {
-                                        color: "#aaa"
+
+                                        color:
+                                            "#aaa"
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
                 );
         }
@@ -1890,7 +2297,10 @@ async function loadHistory() {
                 Failed to load history.
             </div>`;
 
-        console.error(error);
+
+        console.error(
+            error
+        );
     }
 }
 
@@ -1908,6 +2318,7 @@ document.getElementById(
 refresh();
 
 loadHistory();
+
 
 setInterval(
     refresh,
