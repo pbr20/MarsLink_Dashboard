@@ -1,0 +1,21 @@
+services:
+
+  - type: web
+
+    name: marslink-dashboard
+
+    runtime: python
+
+    plan: free
+
+    buildCommand: pip install -r requirements.txt
+
+    startCommand: gunicorn app:app
+
+    envVars:
+
+      - key: DATABASE_URL
+        sync: false
+
+      - key: INGEST_TOKEN
+        sync: false

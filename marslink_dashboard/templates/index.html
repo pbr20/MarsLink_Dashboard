@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarsLink Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background: #0b0f17;
+    color: #f3f5f7;
+}
+header {
+    padding: 22px 30px;
+    border-bottom: 1px solid #202838;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+h1 { margin: 0; font-size: 25px; }
+.subtitle { color: #8993a4; margin-top: 5px; font-size: 13px; }
+.container { padding: 25px 30px; max-width: 1400px; margin: auto; }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+.card {
+    background: #121824;
+    border: 1px solid #202838;
+    border-radius: 16px;
+    padding: 20px;
+}
+.metric-label { color: #8993a4; font-size: 13px; }
+.metric { font-size: 30px; font-weight: 700; margin-top: 7px; }
+.node-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+}
+.node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.node-name { font-size: 20px; font-weight: 700; }
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.online { background: #123c2c; color: #52e0a1; }
+.offline { background: #3a2023; color: #ff7d86; }
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 18px;
+}
+.small {
+    background: #0c111b;
+    border-radius: 12px;
+    padding: 14px;
+}
+.small-value { font-size: 21px; font-weight: 700; margin-top: 4px; }
+.chart-box { margin-top: 18px; height: 230px; }
+.section-title {
+    margin: 28px 0 12px;
+    font-size: 18px;
+}
+.events {
+    max-height: 250px;
+    overflow-y: auto;
+}
+.event {
+    padding: 9px 0;
+    border-bottom: 1px solid #202838;
+    color: #b7c0cf;
+    font-size: 13px;
+}
+.badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: #1b2434;
+    color: #cbd5e1;
+    font-size: 12px;
+}
+@media (max-width: 900px) {
+    .grid, .node-grid { grid-template-columns: 1fr; }
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+
+<body>
+<header>
+    <div>
+        <h1>🚀 MarsLink</h1>
+        <div class="subtitle">LoRa Environmental Monitoring Network</div>
+    </div>
+    <div id="serial" class="badge">Serial: checking...</div>
+</header>
+
+<div class="container">
+
+    <div class="grid">
+        <div class="card">
+            <div class="metric-label">Network Status</div>
+            <div class="metric" id="networkStatus">--</div>
+        </div>
+        <div class="card">
+            <div class="metric-label">Online Nodes</div>
+            <div class="metric" id="onlineNodes">0</div>
+        </div>
+        <div class="card">
+            <div class="metric-label">Last Update</div>
+            <div class="metric" id="lastUpdate">--</div>
+        </div>
+        <div class="card">
+            <div class="metric-label">Gateway</div>
+            <div class="metric">MASTER</div>
+        </div>
+    </div>
+
+    <div class="section-title">Sensor Nodes</div>
+    <div class="node-grid" id="nodes"></div>
+
+    <div class="section-title">Network Events</div>
+    <div class="card events" id="events"></div>
+</div>
+
+<script>
+const charts = {};
+
+function value(v, suffix="") {
+    return v === null || v === undefined ? "--" : v + suffix;
+}
+
+function renderNodes(nodes) {
+    const container = document.getElementById("nodes");
+
+    for (const [id, n] of Object.entries(nodes)) {
+        let card = document.getElementById("node-" + id);
+
+        if (!card) {
+            card = document.createElement("div");
+            card.className = "card";
+            card.id = "node-" + id;
+
+            card.innerHTML = `
+                <div class="node-header">
+                    <div>
+                        <div class="node-name">${n.name}</div>
+                        <div class="subtitle">ID: 0x${id}</div>
+                    </div>
+                    <div class="status"></div>
+                </div>
+
+                <div class="metrics">
+                    <div class="small">
+                        <div class="metric-label">Temperature</div>
+                        <div class="small-value temp">--</div>
+                    </div>
+                    <div class="small">
+                        <div class="metric-label">RSSI</div>
+                        <div class="small-value rssi">--</div>
+                    </div>
+                    <div class="small">
+                        <div class="metric-label">SNR</div>
+                        <div class="small-value snr">--</div>
+                    </div>
+                    <div class="small">
+                        <div class="metric-label">Message ID</div>
+                        <div class="small-value msg">--</div>
+                    </div>
+                    <div class="small">
+                        <div class="metric-label">Dust</div>
+                        <div class="small-value dust">--</div>
+                    </div>
+                    <div class="small">
+                        <div class="metric-label">Last Seen</div>
+                        <div class="small-value last">--</div>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <canvas></canvas>
+                </div>
+            `;
+
+            container.appendChild(card);
+
+            const ctx = card.querySelector("canvas").getContext("2d");
+            charts[id] = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: "Temperature °C",
+                        data: [],
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: true } },
+                    scales: {
+                        x: { ticks: { color: "#8993a4" } },
+                        y: { ticks: { color: "#8993a4" } }
+                    }
+                }
+            });
+        }
+
+        const status = card.querySelector(".status");
+        status.textContent = n.status;
+        status.className = "status " + (n.status === "Online" ? "online" : "offline");
+
+        card.querySelector(".temp").textContent = value(n.temperature, " °C");
+        card.querySelector(".rssi").textContent = value(n.rssi, " dBm");
+        card.querySelector(".snr").textContent = value(n.snr, " dB");
+        card.querySelector(".msg").textContent = value(n.message_id);
+        card.querySelector(".dust").textContent = value(n.dust, " µg/m³");
+
+        card.querySelector(".last").textContent =
+            n.last_seen === null ? "--" : n.last_seen + " s ago";
+
+        const chart = charts[id];
+        chart.data.labels = n.history.map(x => x.time);
+        chart.data.datasets[0].data = n.history.map(x => x.temperature);
+        chart.update("none");
+    }
+}
+
+async function refresh() {
+    try {
+        const response = await fetch("/api/data");
+        const data = await response.json();
+
+        const nodeValues = Object.values(data.nodes);
+        const online = nodeValues.filter(n => n.status === "Online").length;
+
+        document.getElementById("onlineNodes").textContent =
+            `${online}/${nodeValues.length}`;
+
+        document.getElementById("networkStatus").textContent =
+            online > 0 ? "ONLINE" : "OFFLINE";
+
+        document.getElementById("lastUpdate").textContent = data.time;
+
+        const serial = document.getElementById("serial");
+
+        if (data.serial.connected) {
+            serial.textContent = "Serial: Connected";
+        } else {
+            serial.textContent = "Serial: Disconnected";
+        }
+
+        renderNodes(data.nodes);
+
+        const events = document.getElementById("events");
+        events.innerHTML = data.events.length
+            ? data.events.map(e =>
+                `<div class="event"><b>${e.time}</b> — ${e.message}</div>`
+              ).join("")
+            : `<div class="event">No events yet.</div>`;
+
+    } catch (e) {
+        document.getElementById("serial").textContent =
+            "Dashboard connection error";
+    }
+}
+
+refresh();
+setInterval(refresh, 1000);
+</script>
+</body>
+</html>
