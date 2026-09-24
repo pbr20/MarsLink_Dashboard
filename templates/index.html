@@ -7,9 +7,8 @@
 <meta charset="UTF-8">
 
 <meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
 >
 
 <title>MarsLink Mission Control</title>
@@ -43,6 +42,11 @@ content="width=device-width, initial-scale=1.0"
     --radius: 18px;
 }
 
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
 body {
 
     margin: 0;
@@ -71,6 +75,7 @@ body {
     min-height: 100vh;
 }
 
+
 body::after {
 
     content: "";
@@ -88,6 +93,11 @@ body::after {
             transparent 35%
         );
 }
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
 
 header {
 
@@ -116,6 +126,7 @@ header {
         1px solid var(--border);
 }
 
+
 .brand {
 
     display: flex;
@@ -124,6 +135,7 @@ header {
 
     gap: 14px;
 }
+
 
 .logo {
 
@@ -150,6 +162,7 @@ header {
         rgba(224,90,63,0.3);
 }
 
+
 h1 {
 
     margin: 0;
@@ -159,6 +172,7 @@ h1 {
     letter-spacing: -0.5px;
 }
 
+
 .subtitle {
 
     margin-top: 4px;
@@ -167,6 +181,7 @@ h1 {
 
     font-size: 12px;
 }
+
 
 .status-pill {
 
@@ -189,6 +204,7 @@ h1 {
     white-space: nowrap;
 }
 
+
 .dot {
 
     width: 8px;
@@ -199,6 +215,7 @@ h1 {
     background: var(--red);
 }
 
+
 .dot.online {
 
     background: var(--green);
@@ -208,18 +225,31 @@ h1 {
         rgba(74,222,128,0.7);
 }
 
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
 .container {
 
     position: relative;
 
     z-index: 1;
 
-    width: min(1450px, calc(100% - 32px));
+    width: min(
+        1450px,
+        calc(100% - 32px)
+    );
 
     margin: auto;
 
     padding: 28px 0 50px;
 }
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
 
 .hero {
 
@@ -244,6 +274,7 @@ h1 {
 
     position: relative;
 }
+
 
 .hero::before {
 
@@ -274,6 +305,7 @@ h1 {
         rgba(0,0,0,0.5);
 }
 
+
 .hero-content {
 
     position: relative;
@@ -282,6 +314,7 @@ h1 {
 
     max-width: 750px;
 }
+
 
 .eyebrow {
 
@@ -298,14 +331,20 @@ h1 {
     margin-bottom: 10px;
 }
 
+
 .hero h2 {
 
     margin: 0;
 
-    font-size: clamp(28px, 5vw, 46px);
+    font-size: clamp(
+        28px,
+        5vw,
+        46px
+    );
 
     letter-spacing: -1.5px;
 }
+
 
 .hero p {
 
@@ -318,6 +357,11 @@ h1 {
     margin-bottom: 0;
 }
 
+
+/* =========================================================
+   OVERVIEW
+   ========================================================= */
+
 .grid {
 
     display: grid;
@@ -327,6 +371,7 @@ h1 {
 
     gap: 15px;
 }
+
 
 .card {
 
@@ -346,6 +391,7 @@ h1 {
         rgba(0,0,0,0.16);
 }
 
+
 .metric-label {
 
     color: var(--muted);
@@ -357,6 +403,7 @@ h1 {
     letter-spacing: 0.7px;
 }
 
+
 .metric {
 
     margin-top: 8px;
@@ -365,6 +412,11 @@ h1 {
 
     font-weight: 800;
 }
+
+
+/* =========================================================
+   SECTION TITLES
+   ========================================================= */
 
 .section-title {
 
@@ -381,15 +433,25 @@ h1 {
     font-weight: 800;
 }
 
+
+/* =========================================================
+   NODE GRID
+   ========================================================= */
+
 .node-grid {
 
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(3, 1fr);
 
     gap: 18px;
 }
+
+
+/* =========================================================
+   NODE HEADER
+   ========================================================= */
 
 .node-header {
 
@@ -402,12 +464,14 @@ h1 {
     gap: 15px;
 }
 
+
 .node-name {
 
     font-size: 20px;
 
     font-weight: 800;
 }
+
 
 .node-id {
 
@@ -417,6 +481,7 @@ h1 {
 
     margin-top: 4px;
 }
+
 
 .node-status {
 
@@ -429,6 +494,7 @@ h1 {
     font-weight: 800;
 }
 
+
 .node-status.online {
 
     color: var(--green);
@@ -436,6 +502,7 @@ h1 {
     background:
         rgba(74,222,128,0.10);
 }
+
 
 .node-status.offline {
 
@@ -445,17 +512,23 @@ h1 {
         rgba(251,113,133,0.10);
 }
 
+
+/* =========================================================
+   NODE METRICS
+   ========================================================= */
+
 .metrics {
 
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(2, 1fr);
 
     gap: 10px;
 
     margin-top: 18px;
 }
+
 
 .small {
 
@@ -471,6 +544,7 @@ h1 {
         rgba(255,255,255,0.05);
 }
 
+
 .small-value {
 
     font-size: 19px;
@@ -480,6 +554,11 @@ h1 {
     margin-top: 5px;
 }
 
+
+/* =========================================================
+   CHART
+   ========================================================= */
+
 .chart-box {
 
     height: 260px;
@@ -487,10 +566,16 @@ h1 {
     margin-top: 20px;
 }
 
+
+/* =========================================================
+   ARCHIVE
+   ========================================================= */
+
 .archive {
 
     margin-top: 30px;
 }
+
 
 .archive-controls {
 
@@ -502,6 +587,7 @@ h1 {
 
     align-items: center;
 }
+
 
 input[type="date"] {
 
@@ -519,6 +605,7 @@ input[type="date"] {
 
     font: inherit;
 }
+
 
 button {
 
@@ -541,11 +628,13 @@ button {
     font-weight: 700;
 }
 
+
 button:hover {
 
     background:
         rgba(255,255,255,0.14);
 }
+
 
 button.primary {
 
@@ -554,17 +643,23 @@ button.primary {
     border-color: var(--mars);
 }
 
+
+/* =========================================================
+   HISTORY
+   ========================================================= */
+
 .history-grid {
 
     display: grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(3, 1fr);
 
     gap: 18px;
 
     margin-top: 15px;
 }
+
 
 .history-title {
 
@@ -575,17 +670,19 @@ button.primary {
     margin-bottom: 15px;
 }
 
+
 .summary-grid {
 
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(2, 1fr);
 
     gap: 8px;
 
     margin-bottom: 18px;
 }
+
 
 .summary {
 
@@ -597,6 +694,7 @@ button.primary {
         rgba(255,255,255,0.04);
 }
 
+
 .summary strong {
 
     display: block;
@@ -605,6 +703,7 @@ button.primary {
 
     margin-top: 3px;
 }
+
 
 .empty {
 
@@ -615,12 +714,18 @@ button.primary {
     text-align: center;
 }
 
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+
 .events {
 
     max-height: 300px;
 
     overflow-y: auto;
 }
+
 
 .event {
 
@@ -640,10 +745,12 @@ button.primary {
     gap: 10px;
 }
 
+
 .event:last-child {
 
     border-bottom: none;
 }
+
 
 .event-icon {
 
@@ -661,39 +768,41 @@ button.primary {
     font-size: 12px;
 }
 
+
 .event-online .event-icon {
 
     background:
         rgba(74,222,128,0.12);
-
 }
+
 
 .event-offline .event-icon {
 
     background:
         rgba(251,113,133,0.12);
-
 }
+
 
 .event-system .event-icon {
 
     background:
         rgba(251,191,36,0.12);
-
 }
+
 
 .event-content {
 
     flex: 1;
 }
 
+
 .event-message {
 
     color: #eee;
 
     font-weight: 600;
-
 }
+
 
 .event-time {
 
@@ -703,6 +812,11 @@ button.primary {
 
     margin-top: 3px;
 }
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
 
 .footer {
 
@@ -715,26 +829,39 @@ button.primary {
     font-size: 11px;
 }
 
-@media(max-width: 1000px) {
 
-    .grid {
-        grid-template-columns:
-            repeat(2, 1fr);
-    }
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width: 1100px) {
 
     .node-grid,
     .history-grid {
-        grid-template-columns: 1fr;
+
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 }
+
+
+@media(max-width: 1000px) {
+
+    .grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
 
 @media(max-width: 650px) {
 
     header {
 
         padding: 14px 16px;
-
     }
+
 
     .container {
 
@@ -747,17 +874,27 @@ button.primary {
         padding-top: 15px;
     }
 
+
     .hero {
 
         padding: 24px;
-
     }
+
 
     .grid {
 
-        grid-template-columns: 1fr 1fr;
-
+        grid-template-columns:
+            1fr 1fr;
     }
+
+
+    .node-grid,
+    .history-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
 
     .metrics {
 
@@ -765,27 +902,34 @@ button.primary {
             repeat(2, 1fr);
     }
 
+
     .small-value {
 
         font-size: 16px;
     }
 
+
     .logo {
 
         width: 40px;
         height: 40px;
+
         font-size: 20px;
     }
+
 
     h1 {
 
         font-size: 19px;
     }
 
+
     .status-pill {
 
         font-size: 10px;
-        padding: 7px 9px;
+
+        padding:
+            7px 9px;
     }
 }
 
@@ -793,54 +937,63 @@ button.primary {
 
 </head>
 
+
 <body>
+
+
+<!-- =======================================================
+     HEADER
+======================================================== -->
 
 <header>
 
-```
-<div class="brand">
+    <div class="brand">
 
-    <div class="logo">
-        🚀
-    </div>
+        <div class="logo">
+            🚀
+        </div>
 
-    <div>
+        <div>
 
-        <h1>
-            MarsLink
-        </h1>
+            <h1>
+                MarsLink
+            </h1>
 
-        <div class="subtitle">
-            LoRa Environmental Monitoring Network
+            <div class="subtitle">
+                LoRa Environmental Monitoring Network
+            </div>
+
         </div>
 
     </div>
 
-</div>
 
+    <div
+        class="status-pill"
+        id="networkPill"
+    >
 
-<div
-    class="status-pill"
-    id="networkPill"
->
+        <span
+            class="dot"
+            id="networkDot"
+        ></span>
 
-    <span
-        class="dot"
-        id="networkDot"
-    ></span>
+        <span id="networkText">
+            Connecting...
+        </span>
 
-    <span id="networkText">
-        Connecting...
-    </span>
-
-</div>
-```
+    </div>
 
 </header>
 
+
 <div class="container">
 
-```
+
+<!-- =======================================================
+     HERO
+======================================================== -->
+
 <section class="hero">
 
     <div class="hero-content">
@@ -864,8 +1017,9 @@ button.primary {
 </section>
 
 
-
-<!-- OVERVIEW -->
+<!-- =======================================================
+     OVERVIEW
+======================================================== -->
 
 <div class="grid">
 
@@ -933,8 +1087,9 @@ button.primary {
 </div>
 
 
-
-<!-- LIVE NODES -->
+<!-- =======================================================
+     LIVE NODES
+======================================================== -->
 
 <div class="section-title">
 
@@ -946,7 +1101,7 @@ button.primary {
         class="metric-label"
         id="liveLabel"
     >
-        LIVE
+        3 NODES
     </span>
 
 </div>
@@ -958,8 +1113,9 @@ button.primary {
 ></div>
 
 
-
-<!-- HISTORY -->
+<!-- =======================================================
+     HISTORY
+======================================================== -->
 
 <section class="archive">
 
@@ -1014,8 +1170,9 @@ button.primary {
 </section>
 
 
-
-<!-- EVENTS -->
+<!-- =======================================================
+     EVENTS
+======================================================== -->
 
 <div class="section-title">
 
@@ -1045,6 +1202,9 @@ button.primary {
 </div>
 
 
+<!-- =======================================================
+     FOOTER
+======================================================== -->
 
 <div class="footer">
 
@@ -1052,19 +1212,26 @@ button.primary {
     • Environmental Monitoring System
 
 </div>
-```
+
 
 </div>
 
+
 <script>
 
+
+// =========================================================
+// CHART STORAGE
+// =========================================================
+
 const liveCharts = {};
+
 const historyCharts = {};
 
 
-// ---------------------------------------------------------
+// =========================================================
 // EVENT SYSTEM
-// ---------------------------------------------------------
+// =========================================================
 
 let previousNodeStates = {};
 
@@ -1073,7 +1240,9 @@ let networkEvents = [];
 const MAX_EVENTS = 30;
 
 
-// Add an event to the event list
+// =========================================================
+// ADD EVENT
+// =========================================================
 
 function addEvent(
     message,
@@ -1082,6 +1251,7 @@ function addEvent(
 ) {
 
     const now = new Date();
+
 
     const time =
         now.toLocaleTimeString(
@@ -1103,11 +1273,8 @@ function addEvent(
         icon: icon,
 
         time: time
-
     });
 
-
-    // Keep only latest 30 events
 
     if (
         networkEvents.length >
@@ -1126,7 +1293,9 @@ function addEvent(
 }
 
 
-// Render events on screen
+// =========================================================
+// RENDER EVENTS
+// =========================================================
 
 function renderEvents() {
 
@@ -1193,7 +1362,6 @@ function renderEvents() {
                     </div>
 
                 </div>
-
             `;
 
 
@@ -1205,7 +1373,9 @@ function renderEvents() {
 }
 
 
-// Check whether a node changed state
+// =========================================================
+// NODE STATE EVENTS
+// =========================================================
 
 function checkNodeEvents(
     nodes
@@ -1223,8 +1393,6 @@ function checkNodeEvents(
         const previousStatus =
             previousNodeStates[id];
 
-
-        // First time seeing the node
 
         if (
             previousStatus === undefined
@@ -1273,9 +1441,9 @@ function checkNodeEvents(
 }
 
 
-// ---------------------------------------------------------
+// =========================================================
 // HELPERS
-// ---------------------------------------------------------
+// =========================================================
 
 function value(
     v,
@@ -1289,6 +1457,7 @@ function value(
 
         return "--";
     }
+
 
     return v + suffix;
 }
@@ -1338,9 +1507,9 @@ function selectToday() {
 }
 
 
-// ---------------------------------------------------------
-// LIVE NODE CARDS
-// ---------------------------------------------------------
+// =========================================================
+// CREATE LIVE NODE
+// =========================================================
 
 function createLiveNode(
     id,
@@ -1376,6 +1545,7 @@ function createLiveNode(
                 </div>
 
             </div>
+
 
             <div class="node-status">
                 --
@@ -1471,7 +1641,6 @@ function createLiveNode(
             <canvas></canvas>
 
         </div>
-
     `;
 
 
@@ -1523,7 +1692,6 @@ function createLiveNode(
 
                             yAxisID:
                                 "temp"
-
                         },
 
 
@@ -1545,11 +1713,8 @@ function createLiveNode(
 
                             yAxisID:
                                 "dust"
-
                         }
-
                     ]
-
                 },
 
 
@@ -1611,7 +1776,6 @@ function createLiveNode(
                             position:
                                 "left",
 
-
                             ticks: {
 
                                 color:
@@ -1631,7 +1795,6 @@ function createLiveNode(
 
                             position:
                                 "right",
-
 
                             ticks: {
 
@@ -1653,13 +1816,29 @@ function createLiveNode(
 }
 
 
-// ---------------------------------------------------------
-// UPDATE LIVE NODES
-// ---------------------------------------------------------
+// =========================================================
+// RENDER LIVE NODES
+// =========================================================
 
 function renderNodes(
     nodes
 ) {
+
+    const nodeContainer =
+        document.getElementById(
+            "nodes"
+        );
+
+
+    const nodeCount =
+        Object.keys(nodes).length;
+
+
+    document.getElementById(
+        "liveLabel"
+    ).textContent =
+        `${nodeCount} NODES`;
+
 
     for (
         const [id, node]
@@ -1792,9 +1971,9 @@ function renderNodes(
 }
 
 
-// ---------------------------------------------------------
+// =========================================================
 // LIVE API
-// ---------------------------------------------------------
+// =========================================================
 
 async function refresh() {
 
@@ -1804,6 +1983,14 @@ async function refresh() {
             await fetch(
                 "/api/data"
             );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
 
 
         const data =
@@ -1883,7 +2070,7 @@ async function refresh() {
         );
 
 
-        // Update node cards
+        // Render all nodes dynamically
 
         renderNodes(
             data.nodes
@@ -1905,15 +2092,16 @@ async function refresh() {
 
 
         console.error(
+            "Dashboard refresh error:",
             error
         );
     }
 }
 
 
-// ---------------------------------------------------------
+// =========================================================
 // HISTORY
-// ---------------------------------------------------------
+// =========================================================
 
 async function loadHistory() {
 
@@ -1946,6 +2134,14 @@ async function loadHistory() {
             await fetch(
                 `/api/history?date=${date}`
             );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
 
 
         const data =
@@ -2114,7 +2310,6 @@ async function loadHistory() {
                     <canvas></canvas>
 
                 </div>
-
             `;
 
 
@@ -2157,6 +2352,7 @@ async function loadHistory() {
                                     r =>
                                         r.time
                                 ),
+
 
                             datasets: [
 
@@ -2202,9 +2398,7 @@ async function loadHistory() {
                                     yAxisID:
                                         "dust"
                                 }
-
                             ]
-
                         },
 
 
@@ -2263,7 +2457,6 @@ async function loadHistory() {
                                             false
                                     }
                                 }
-
                             },
 
 
@@ -2299,15 +2492,16 @@ async function loadHistory() {
 
 
         console.error(
+            "History error:",
             error
         );
     }
 }
 
 
-// ---------------------------------------------------------
+// =========================================================
 // STARTUP
-// ---------------------------------------------------------
+// =========================================================
 
 document.getElementById(
     "historyDate"
