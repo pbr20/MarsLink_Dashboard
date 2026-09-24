@@ -28,6 +28,13 @@ DHT dht(
 
 
 // =====================================================
+// LED
+// =====================================================
+
+#define RESPONSE_LED 16
+
+
+// =====================================================
 // DEVICE IDs
 // =====================================================
 
@@ -51,7 +58,20 @@ void setup() {
   Serial.println("================================");
 
 
+  // ===================================================
+  // LED
+  // ===================================================
+
+  pinMode(RESPONSE_LED, OUTPUT);
+
+  // LED OFF initially
+  digitalWrite(RESPONSE_LED, LOW);
+
+
+  // ===================================================
   // DHT
+  // ===================================================
+
   dht.begin();
 
 
@@ -112,17 +132,21 @@ void setup() {
   Serial.println("Node ID    : 0xCC");
   Serial.println("Frequency  : 433 MHz");
   Serial.println("SF         : 7");
-  Serial.println("BW         : 125 kHz");
+  Serial.println("BW         : 62.5 kHz");
   Serial.println("CR         : 4/5");
   Serial.println("SyncWord   : 0x12");
   Serial.println("CRC        : ON");
 
   Serial.println();
   Serial.println("DHT11 READY");
+  Serial.println("LED PIN    : GPIO 16");
   Serial.println("WAITING FOR MASTER REQUEST...");
 
 
-  // RX mode
+  // ===================================================
+  // RX MODE
+  // ===================================================
+
   LoRa.receive();
 }
 
@@ -152,7 +176,9 @@ void loop() {
   Serial.println("================================");
 
 
-  // Header
+  // ===================================================
+  // HEADER
+  // ===================================================
 
   byte destination = LoRa.read();
 
@@ -161,7 +187,9 @@ void loop() {
   byte receivedID = LoRa.read();
 
 
-  // Command
+  // ===================================================
+  // COMMAND
+  // ===================================================
 
   String command = "";
 
@@ -171,7 +199,9 @@ void loop() {
   }
 
 
-  // Radio information
+  // ===================================================
+  // RADIO INFORMATION
+  // ===================================================
 
   long rssi = LoRa.packetRssi();
 
@@ -237,7 +267,9 @@ void loop() {
     Serial.println("MASTER REQUESTED TEMPERATURE");
 
 
-    // Read DHT11
+    // =================================================
+    // READ DHT11
+    // =================================================
 
     float temperature = dht.readTemperature();
 
@@ -261,6 +293,15 @@ void loop() {
       temperature,
       1
     );
+
+
+    // =================================================
+    // LED ON
+    // =================================================
+
+    digitalWrite(RESPONSE_LED, HIGH);
+
+    Serial.println("LED GPIO 16: ON");
 
 
     // =================================================
@@ -303,7 +344,20 @@ void loop() {
     Serial.println("Response sent");
 
 
-    // Back to RX
+    // =================================================
+    // LED OFF
+    // =================================================
+
+    delay(300);
+
+    digitalWrite(RESPONSE_LED, LOW);
+
+    Serial.println("LED GPIO 16: OFF");
+
+
+    // =================================================
+    // BACK TO RX
+    // =================================================
 
     LoRa.receive();
   }

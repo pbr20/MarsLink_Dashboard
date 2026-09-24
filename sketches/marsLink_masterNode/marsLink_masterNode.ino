@@ -20,21 +20,29 @@
 #define MASTER_ID  0xFF
 #define NODE1_ID   0xBB
 #define NODE2_ID   0xCC
+#define NODE3_ID   0xDD
 
 
 // =====================================================
 // TIMING
 // =====================================================
 
-unsigned long lastCycle = 0;
-
+// Time before starting a new complete cycle
 const unsigned long CYCLE_INTERVAL = 5000;
+
+// How long Master waits for a node response
 const unsigned long RESPONSE_TIMEOUT = 2000;
 
+// Time between Node 1 -> Node 2 -> Node 3
+// CHANGE THIS VALUE TO TEST DIFFERENT INTERVALS
+const unsigned long NODE_INTERVAL = 5000;
+
 
 // =====================================================
-// MESSAGE ID
+// VARIABLES
 // =====================================================
+
+unsigned long lastCycle = 0;
 
 byte messageID = 0;
 
@@ -46,14 +54,13 @@ byte messageID = 0;
 void setup() {
 
   Serial.begin(115200);
-
   delay(2000);
 
   Serial.println();
-  Serial.println("================================");
-  Serial.println("        MARS LINK MASTER");
-  Serial.println("================================");
-
+  Serial.println("################################");
+  Serial.println("#       MARSLINK MASTER        #");
+  Serial.println("################################");
+  Serial.println();
 
   // ===================================================
   // SPI
@@ -66,9 +73,8 @@ void setup() {
     LORA_SS
   );
 
-
   // ===================================================
-  // LORA PINS
+  // LoRa PINS
   // ===================================================
 
   LoRa.setPins(
@@ -77,25 +83,31 @@ void setup() {
     LORA_DIO0
   );
 
+  // ===================================================
+  // START LoRa
+  // ===================================================
 
-  // ===================================================
-  // START LORA
-  // ===================================================
+  Serial.println("Starting LoRa...");
 
   if (!LoRa.begin(433E6)) {
 
-    Serial.println("LoRa FAILED!");
+    Serial.println("ERROR: LoRa initialization failed!");
 
-    while (1);
+    while (1) {
+      delay(1000);
+    }
   }
 
+  Serial.println("LoRa initialized successfully!");
+  Serial.println();
 
   // ===================================================
-  // RADIO SETTINGS
+  // LoRa SETTINGS
   // ===================================================
 
   LoRa.setSpreadingFactor(7);
 
+  // 62.5 kHz
   LoRa.setSignalBandwidth(62.5E3);
 
   LoRa.setCodingRate4(5);
@@ -106,31 +118,49 @@ void setup() {
 
   LoRa.setTxPower(17);
 
-
   // ===================================================
-  // INFORMATION
+  // NETWORK INFORMATION
   // ===================================================
 
-  Serial.println("LoRa SUCCESS!");
+  Serial.println("--------------------------------");
+  Serial.println("NETWORK CONFIGURATION");
+  Serial.println("--------------------------------");
+
+  Serial.print("Master ID : 0x");
+  Serial.println(MASTER_ID, HEX);
+
+  Serial.print("Node 1 ID : 0x");
+  Serial.println(NODE1_ID, HEX);
+
+  Serial.print("Node 2 ID : 0x");
+  Serial.println(NODE2_ID, HEX);
+
+  Serial.print("Node 3 ID : 0x");
+  Serial.println(NODE3_ID, HEX);
 
   Serial.println();
-  Serial.println("Frequency : 433 MHz");
-  Serial.println("SF        : 7");
-  Serial.println("BW        : 125 kHz");
-  Serial.println("CR        : 4/5");
-  Serial.println("SyncWord  : 0x12");
-  Serial.println("CRC       : ON");
+
+  Serial.println("--------------------------------");
+  Serial.println("TIMING CONFIGURATION");
+  Serial.println("--------------------------------");
+
+  Serial.print("Cycle interval : ");
+  Serial.print(CYCLE_INTERVAL);
+  Serial.println(" ms");
+
+  Serial.print("Node interval  : ");
+  Serial.print(NODE_INTERVAL);
+  Serial.println(" ms");
+
+  Serial.print("Response timeout: ");
+  Serial.print(RESPONSE_TIMEOUT);
+  Serial.println(" ms");
 
   Serial.println();
-  Serial.println("MASTER READY");
-
-  Serial.println();
-  Serial.println("ROUTING ORDER:");
-  Serial.println("MASTER -> NODE 1 (BB)");
-  Serial.println("MASTER -> NODE 2 (CC)");
-
+  Serial.println("Master ready.");
   Serial.println();
 
+  // Start listening
   LoRa.receive();
 }
 
@@ -142,7 +172,7 @@ void setup() {
 void loop() {
 
   // ===================================================
-  // RUN NETWORK CYCLE
+  // START NEW CYCLE
   // ===================================================
 
   if (millis() - lastCycle >= CYCLE_INTERVAL) {
@@ -150,15 +180,18 @@ void loop() {
     lastCycle = millis();
 
     Serial.println();
-    Serial.println();
-    Serial.println("################################");
-    Serial.println("#       NETWORK CYCLE          #");
-    Serial.println("################################");
+    Serial.println("================================");
+    Serial.println("        NETWORK CYCLE");
+    Serial.println("================================");
 
 
     // =================================================
-    // FIRST NODE 1
+    // NODE 1
     // =================================================
+
+    Serial.println("--------------------------------");
+    Serial.println("REQUESTING NODE 1");
+    Serial.println("--------------------------------");
 
     bool node1Received = requestNode(
       NODE1_ID,
@@ -167,8 +200,27 @@ void loop() {
 
 
     // =================================================
-    // THEN NODE 2
+    // WAIT BEFORE NODE 2
     // =================================================
+
+    Serial.println();
+    Serial.println("--------------------------------");
+    Serial.print("WAITING ");
+    Serial.print(NODE_INTERVAL);
+    Serial.println(" ms BEFORE NODE 2");
+    Serial.println("--------------------------------");
+
+    delay(NODE_INTERVAL);
+
+
+    // =================================================
+    // NODE 2
+    // =================================================
+
+    Serial.println();
+    Serial.println("--------------------------------");
+    Serial.println("REQUESTING NODE 2");
+    Serial.println("--------------------------------");
 
     bool node2Received = requestNode(
       NODE2_ID,
@@ -177,34 +229,71 @@ void loop() {
 
 
     // =================================================
-    // CYCLE RESULT
+    // WAIT BEFORE NODE 3
     // =================================================
 
     Serial.println();
-    Serial.println("################################");
-    Serial.println("       CYCLE COMPLETE");
-    Serial.println("################################");
+    Serial.println("--------------------------------");
+    Serial.print("WAITING ");
+    Serial.print(NODE_INTERVAL);
+    Serial.println(" ms BEFORE NODE 3");
+    Serial.println("--------------------------------");
+
+    delay(NODE_INTERVAL);
+
+
+    // =================================================
+    // NODE 3
+    // =================================================
+
+    Serial.println();
+    Serial.println("--------------------------------");
+    Serial.println("REQUESTING NODE 3");
+    Serial.println("--------------------------------");
+
+    bool node3Received = requestNode(
+      NODE3_ID,
+      "10"
+    );
+
+
+    // =================================================
+    // WAIT BEFORE STARTING NODE 1 AGAIN
+    // =================================================
+
+    Serial.println();
+    Serial.println("--------------------------------");
+    Serial.print("WAITING ");
+    Serial.print(NODE_INTERVAL);
+    Serial.println(" ms BEFORE NODE 1");
+    Serial.println("--------------------------------");
+
+    delay(NODE_INTERVAL);
+
+
+    // =================================================
+    // CYCLE COMPLETE
+    // =================================================
+
+    Serial.println();
+    Serial.println("================================");
+    Serial.println("        CYCLE COMPLETE");
+    Serial.println("================================");
 
     Serial.print("Node 1: ");
-
-    if (node1Received) {
-      Serial.println("ONLINE");
-    }
-    else {
-      Serial.println("OFFLINE / NO RESPONSE");
-    }
+    Serial.println(node1Received ? "ONLINE" : "OFFLINE");
 
     Serial.print("Node 2: ");
+    Serial.println(node2Received ? "ONLINE" : "OFFLINE");
 
-    if (node2Received) {
-      Serial.println("ONLINE");
-    }
-    else {
-      Serial.println("OFFLINE / NO RESPONSE");
-    }
+    Serial.print("Node 3: ");
+    Serial.println(node3Received ? "ONLINE" : "OFFLINE");
 
-    Serial.println("################################");
+    Serial.println("================================");
+    Serial.println();
 
+
+    // Return to receive mode
     LoRa.receive();
   }
 }
@@ -214,39 +303,23 @@ void loop() {
 // REQUEST NODE
 // =====================================================
 
-bool requestNode(
-  byte nodeID,
-  String command
-) {
+bool requestNode(byte nodeID, String command) {
 
-  // ===================================================
-  // MESSAGE ID
-  // ===================================================
-
+  // Increase message ID
   messageID++;
 
-
-  // ===================================================
-  // NODE NAME
-  // ===================================================
-
-  Serial.println();
-  Serial.println("--------------------------------");
-
-  if (nodeID == NODE1_ID) {
-
-    Serial.println("      REQUESTING NODE 1");
-    Serial.println("      NODE ID: 0xBB");
+  // Prevent 0 if it overflows
+  if (messageID == 0) {
+    messageID = 1;
   }
 
-  else if (nodeID == NODE2_ID) {
 
-    Serial.println("      REQUESTING NODE 2");
-    Serial.println("      NODE ID: 0xCC");
-  }
+  // ===================================================
+  // PRINT REQUEST INFORMATION
+  // ===================================================
 
-  Serial.println("--------------------------------");
-
+  Serial.print("NODE ID: 0x");
+  Serial.println(nodeID, HEX);
 
   Serial.print("Command    : ");
   Serial.println(command);
@@ -278,11 +351,12 @@ bool requestNode(
   LoRa.endPacket();
 
 
-  Serial.println("REQUEST SENT");
+  Serial.println("Request sent.");
+  Serial.println("Waiting for response...");
 
 
   // ===================================================
-  // WAIT FOR RESPONSE
+  // SWITCH TO RECEIVE MODE
   // ===================================================
 
   LoRa.receive();
@@ -290,22 +364,23 @@ bool requestNode(
   unsigned long startTime = millis();
 
 
+  // ===================================================
+  // WAIT FOR RESPONSE
+  // ===================================================
+
   while (millis() - startTime < RESPONSE_TIMEOUT) {
 
     int packetSize = LoRa.parsePacket();
 
-
-    if (packetSize > 0) {
+    if (packetSize) {
 
       // ===============================================
       // READ HEADER
       // ===============================================
 
       byte destination = LoRa.read();
-
-      byte sender = LoRa.read();
-
-      byte receivedID = LoRa.read();
+      byte sender      = LoRa.read();
+      byte receivedID  = LoRa.read();
 
 
       // ===============================================
@@ -315,158 +390,111 @@ bool requestNode(
       String payload = "";
 
       while (LoRa.available()) {
-
         payload += (char)LoRa.read();
       }
 
 
       // ===============================================
-      // RADIO DATA
+      // SIGNAL INFORMATION
       // ===============================================
 
-      long rssi = LoRa.packetRssi();
+      int rssi = LoRa.packetRssi();
 
       float snr = LoRa.packetSnr();
 
 
       // ===============================================
-      // CHECK RESPONSE
+      // PRINT RECEIVED PACKET
       // ===============================================
 
-      if (destination != MASTER_ID) {
+      Serial.println();
+      Serial.println("******** RESPONSE RECEIVED ********");
 
-        continue;
-      }
+      Serial.print("Destination : 0x");
+      Serial.println(destination, HEX);
 
-      if (sender != nodeID) {
+      Serial.print("Sender      : 0x");
+      Serial.println(sender, HEX);
 
-        continue;
-      }
-
-      if (receivedID != messageID) {
-
-        continue;
-      }
-
-
-      // ===============================================
-      // NODE 1
-      // ===============================================
-
-      if (sender == NODE1_ID) {
-
-        Serial.println();
-        Serial.println("================================");
-        Serial.println("       NODE 1 RESPONSE");
-        Serial.println("================================");
-
-        Serial.println("Node       : NODE 1");
-        Serial.println("ID         : 0xBB");
-
-        Serial.print("Temperature: ");
-        Serial.print(payload);
-        Serial.println(" C");
-
-        Serial.print("RSSI       : ");
-        Serial.print(rssi);
-        Serial.println(" dBm");
-
-        Serial.print("SNR        : ");
-        Serial.print(snr);
-        Serial.println(" dB");
-
-        Serial.print("Message ID : ");
-        Serial.println(receivedID);
-
-        Serial.println("Status     : ONLINE");
-
-        Serial.println("================================");
-      }
-
-
-      // ===============================================
-      // NODE 2
-      // ===============================================
-
-      else if (sender == NODE2_ID) {
-
-        Serial.println();
-        Serial.println("================================");
-        Serial.println("       NODE 2 RESPONSE");
-        Serial.println("================================");
-
-        Serial.println("Node       : NODE 2");
-        Serial.println("ID         : 0xCC");
-
-        Serial.print("Temperature: ");
-        Serial.print(payload);
-        Serial.println(" C");
-
-        Serial.print("RSSI       : ");
-        Serial.print(rssi);
-        Serial.println(" dBm");
-
-        Serial.print("SNR        : ");
-        Serial.print(snr);
-        Serial.println(" dB");
-
-        Serial.print("Message ID : ");
-        Serial.println(receivedID);
-
-        Serial.println("Status     : ONLINE");
-
-        Serial.println("================================");
-      }
-
-
-      // ===============================================
-      // SEND DATA TO PYTHON DASHBOARD
-      // ===============================================
-
-      Serial.print("DATA|NODE=");
-      Serial.print(sender, HEX);
-
-      Serial.print("|TEMP=");
-      Serial.print(payload);
-
-      Serial.print("|RSSI=");
-      Serial.print(rssi);
-
-      Serial.print("|SNR=");
-      Serial.print(snr);
-
-      Serial.print("|MSG=");
+      Serial.print("Message ID  : ");
       Serial.println(receivedID);
 
+      Serial.print("Temperature : ");
+      Serial.println(payload);
 
-      LoRa.receive();
+      Serial.print("RSSI        : ");
+      Serial.print(rssi);
+      Serial.println(" dBm");
 
-      return true;
+      Serial.print("SNR         : ");
+      Serial.print(snr);
+      Serial.println(" dB");
+
+
+      // ===============================================
+      // VALIDATE RESPONSE
+      // ===============================================
+
+      if (
+        destination == MASTER_ID &&
+        sender == nodeID &&
+        receivedID == messageID
+      ) {
+
+        Serial.println("STATUS      : VALID RESPONSE");
+
+        // =============================================
+        // DASHBOARD DATA
+        // =============================================
+
+        Serial.print("DATA|NODE=");
+
+        if (sender < 16) {
+          Serial.print("0");
+        }
+
+        Serial.print(sender, HEX);
+
+        Serial.print("|TEMP=");
+        Serial.print(payload);
+
+        Serial.print("|RSSI=");
+        Serial.print(rssi);
+
+        Serial.print("|SNR=");
+        Serial.print(snr);
+
+        Serial.print("|MSG=");
+        Serial.println(receivedID);
+
+
+        Serial.println("************************************");
+
+        return true;
+      }
+
+      else {
+
+        Serial.println("STATUS      : INVALID RESPONSE");
+        Serial.println("************************************");
+      }
     }
   }
 
 
   // ===================================================
-  // NO RESPONSE
+  // TIMEOUT
   // ===================================================
 
   Serial.println();
-  Serial.println("--------------------------------");
+  Serial.println("******** NO RESPONSE ********");
 
-  if (nodeID == NODE1_ID) {
-    Serial.println("NODE 1 NO RESPONSE");
-  }
+  Serial.print("Node 0x");
+  Serial.print(nodeID, HEX);
+  Serial.println(" did not respond.");
 
-  else if (nodeID == NODE2_ID) {
-    Serial.println("NODE 2 NO RESPONSE");
-  }
-
-  Serial.println("Status: OFFLINE / COMMUNICATION FAILURE");
-
-  Serial.println("--------------------------------");
-
-
-  LoRa.receive();
+  Serial.println("STATUS      : OFFLINE");
+  Serial.println("*****************************");
 
   return false;
 }

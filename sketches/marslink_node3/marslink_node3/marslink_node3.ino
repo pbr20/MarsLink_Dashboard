@@ -38,7 +38,7 @@ DHT dht(
 // DEVICE IDs
 // =====================================================
 
-#define NODE1_ID  0xBB
+#define NODE3_ID  0xDD
 #define MASTER_ID 0xFF
 
 
@@ -54,7 +54,7 @@ void setup() {
 
   Serial.println();
   Serial.println("================================");
-  Serial.println("            NODE 1");
+  Serial.println("            NODE 3");
   Serial.println("================================");
 
 
@@ -129,7 +129,7 @@ void setup() {
 
   Serial.println("LoRa SUCCESS!");
 
-  Serial.println("Node ID    : 0xBB");
+  Serial.println("Node ID    : 0xDD");
   Serial.println("Frequency  : 433 MHz");
   Serial.println("SF         : 7");
   Serial.println("BW         : 62.5 kHz");
@@ -233,9 +233,9 @@ void loop() {
   // CHECK DESTINATION
   // ===================================================
 
-  if (destination != NODE1_ID) {
+  if (destination != NODE3_ID) {
 
-    Serial.println("Not for Node 1");
+    Serial.println("Not for Node 3");
 
     LoRa.receive();
 
@@ -315,8 +315,8 @@ void loop() {
     // Destination = Master
     LoRa.write(MASTER_ID);
 
-    // Sender = Node 1
-    LoRa.write(NODE1_ID);
+    // Sender = Node 3
+    LoRa.write(NODE3_ID);
 
     // Same message ID
     LoRa.write(receivedID);
