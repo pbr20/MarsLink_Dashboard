@@ -130,18 +130,12 @@ header {
 
 
 .logo {
-
     width: 48px;
-
     height: 48px;
-
     border-radius: 50%;
-
     display: grid;
-
     place-items: center;
-
-    font-size: 25px;
+    overflow: hidden;
 
     background:
         linear-gradient(
@@ -155,6 +149,12 @@ header {
         rgba(224,90,63,0.3);
 }
 
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
 
 h1 {
 
