@@ -15,31 +15,29 @@
 
 
 // =====================================================
+// DEVICE IDs
+// =====================================================
+
+#define MASTER_ID  0xFF
+#define NODE1_ID   0xBB
+#define NODE3_ID   0xDD
+
+
+// =====================================================
 // DHT11
 // =====================================================
 
 #define DHTPIN 26
 #define DHTTYPE DHT11
 
-DHT dht(
-  DHTPIN,
-  DHTTYPE
-);
+DHT dht(DHTPIN, DHTTYPE);
 
 
 // =====================================================
-// LED
+// RESPONSE LED
 // =====================================================
 
 #define RESPONSE_LED 16
-
-
-// =====================================================
-// DEVICE IDs
-// =====================================================
-
-#define NODE3_ID  0xDD
-#define MASTER_ID 0xFF
 
 
 // =====================================================
@@ -49,35 +47,24 @@ DHT dht(
 void setup() {
 
   Serial.begin(115200);
-
   delay(2000);
 
-  Serial.println();
-  Serial.println("================================");
-  Serial.println("            NODE 3");
-  Serial.println("================================");
-
-
-  // ===================================================
+  // ---------------------------------------------------
   // LED
-  // ===================================================
+  // ---------------------------------------------------
 
   pinMode(RESPONSE_LED, OUTPUT);
-
-  // LED OFF initially
   digitalWrite(RESPONSE_LED, LOW);
 
-
-  // ===================================================
+  // ---------------------------------------------------
   // DHT
-  // ===================================================
+  // ---------------------------------------------------
 
   dht.begin();
 
-
-  // ===================================================
-  // SPI
-  // ===================================================
+  // ---------------------------------------------------
+  // LoRa
+  // ---------------------------------------------------
 
   SPI.begin(
     LORA_SCK,
@@ -86,66 +73,41 @@ void setup() {
     LORA_SS
   );
 
-
-  // ===================================================
-  // LORA
-  // ===================================================
-
   LoRa.setPins(
     LORA_SS,
     LORA_RST,
     LORA_DIO0
   );
 
+  Serial.println();
+  Serial.println("================================");
+  Serial.println("       MARS LINK NODE 3");
+  Serial.println("================================");
 
   if (!LoRa.begin(433E6)) {
 
-    Serial.println("LoRa FAILED!");
+    Serial.println("LoRa initialization FAILED!");
 
     while (1);
   }
 
-
-  // ===================================================
-  // RADIO SETTINGS
-  // ===================================================
+  // ---------------------------------------------------
+  // LoRa configuration
+  // ---------------------------------------------------
 
   LoRa.setSpreadingFactor(7);
-
   LoRa.setSignalBandwidth(62.5E3);
-
   LoRa.setCodingRate4(5);
-
   LoRa.setSyncWord(0x12);
-
   LoRa.enableCrc();
-
   LoRa.setTxPower(17);
 
-
-  // ===================================================
-  // INFORMATION
-  // ===================================================
-
-  Serial.println("LoRa SUCCESS!");
-
-  Serial.println("Node ID    : 0xDD");
-  Serial.println("Frequency  : 433 MHz");
-  Serial.println("SF         : 7");
-  Serial.println("BW         : 62.5 kHz");
-  Serial.println("CR         : 4/5");
-  Serial.println("SyncWord   : 0x12");
-  Serial.println("CRC        : ON");
-
+  Serial.println("LoRa initialized successfully.");
   Serial.println();
-  Serial.println("DHT11 READY");
-  Serial.println("LED PIN    : GPIO 16");
-  Serial.println("WAITING FOR MASTER REQUEST...");
-
-
-  // ===================================================
-  // RX MODE
-  // ===================================================
+  Serial.println("NODE 3 MODE:");
+  Serial.println("Only accepts requests from NODE 1");
+  Serial.println("Master requests are IGNORED");
+  Serial.println();
 
   LoRa.receive();
 }
@@ -159,36 +121,22 @@ void loop() {
 
   int packetSize = LoRa.parsePacket();
 
-
   if (packetSize <= 0) {
-
     return;
   }
 
 
   // ===================================================
-  // REQUEST RECEIVED
-  // ===================================================
-
-  Serial.println();
-  Serial.println("================================");
-  Serial.println("       REQUEST RECEIVED");
-  Serial.println("================================");
-
-
-  // ===================================================
-  // HEADER
+  // READ PACKET HEADER
   // ===================================================
 
   byte destination = LoRa.read();
-
-  byte sender = LoRa.read();
-
-  byte receivedID = LoRa.read();
+  byte sender      = LoRa.read();
+  byte receivedID  = LoRa.read();
 
 
   // ===================================================
-  // COMMAND
+  // READ COMMAND
   // ===================================================
 
   String command = "";
@@ -200,29 +148,50 @@ void loop() {
 
 
   // ===================================================
-  // RADIO INFORMATION
+  // SIGNAL INFORMATION
   // ===================================================
 
-  long rssi = LoRa.packetRssi();
-
+  int rssi = LoRa.packetRssi();
   float snr = LoRa.packetSnr();
 
 
+  // ===================================================
+  // PRINT REQUEST
+  // ===================================================
+
+  Serial.println();
+  Serial.println("================================");
+  Serial.println("       REQUEST RECEIVED");
+  Serial.println("================================");
+
   Serial.print("Destination : 0x");
+
+  if (destination < 16)
+    Serial.print("0");
+
   Serial.println(destination, HEX);
 
+
   Serial.print("Sender      : 0x");
+
+  if (sender < 16)
+    Serial.print("0");
+
   Serial.println(sender, HEX);
+
 
   Serial.print("Message ID  : ");
   Serial.println(receivedID);
 
+
   Serial.print("Command     : ");
   Serial.println(command);
+
 
   Serial.print("RSSI        : ");
   Serial.print(rssi);
   Serial.println(" dBm");
+
 
   Serial.print("SNR         : ");
   Serial.print(snr);
@@ -235,130 +204,166 @@ void loop() {
 
   if (destination != NODE3_ID) {
 
-    Serial.println("Not for Node 3");
+    Serial.println();
+    Serial.println("Ignored: Not for Node 3");
 
     LoRa.receive();
-
     return;
   }
 
 
   // ===================================================
-  // CHECK MASTER
+  // IMPORTANT:
+  // NODE 3 ONLY ACCEPTS NODE 1
   // ===================================================
 
-  if (sender != MASTER_ID) {
-
-    Serial.println("Unknown sender");
-
-    LoRa.receive();
-
-    return;
-  }
-
-
-  // ===================================================
-  // COMMAND 10 = TEMPERATURE
-  // ===================================================
-
-  if (command == "10") {
+  if (sender != NODE1_ID) {
 
     Serial.println();
-    Serial.println("MASTER REQUESTED TEMPERATURE");
+    Serial.println("Ignored: Request is NOT from Node 1");
 
+    if (sender == MASTER_ID) {
 
-    // =================================================
-    // READ DHT11
-    // =================================================
+      Serial.println("Master request detected.");
+      Serial.println("Node 3 does NOT communicate directly");
+      Serial.println("with Master.");
+      Serial.println("Waiting for Node 1 relay request.");
 
-    float temperature = dht.readTemperature();
-
-
-    if (isnan(temperature)) {
-
-      Serial.println("DHT11 READ FAILED!");
-
-      LoRa.receive();
-
-      return;
     }
 
-
-    Serial.print("Temperature: ");
-    Serial.print(temperature, 1);
-    Serial.println(" C");
-
-
-    String data = String(
-      temperature,
-      1
-    );
+    LoRa.receive();
+    return;
+  }
 
 
-    // =================================================
-    // LED ON
-    // =================================================
+  // ===================================================
+  // NODE 1 REQUEST ACCEPTED
+  // ===================================================
 
-    digitalWrite(RESPONSE_LED, HIGH);
-
-    Serial.println("LED GPIO 16: ON");
-
-
-    // =================================================
-    // SEND RESPONSE
-    // =================================================
-
-    LoRa.idle();
-
-    LoRa.beginPacket();
-
-    // Destination = Master
-    LoRa.write(MASTER_ID);
-
-    // Sender = Node 3
-    LoRa.write(NODE3_ID);
-
-    // Same message ID
-    LoRa.write(receivedID);
-
-    // Temperature
-    LoRa.print(data);
-
-    LoRa.endPacket();
+  Serial.println();
+  Serial.println("REQUEST FROM NODE 1 ACCEPTED");
 
 
-    // =================================================
-    // INFORMATION
-    // =================================================
+  // ===================================================
+  // CHECK COMMAND
+  // ===================================================
 
-    Serial.println();
-    Serial.println("---------- RESPONSE ----------");
+  if (command != "10") {
 
-    Serial.print("TX Temperature: ");
-    Serial.print(data);
-    Serial.println(" C");
-
-    Serial.print("Message ID: ");
-    Serial.println(receivedID);
-
-    Serial.println("Response sent");
+    Serial.println("Unknown command.");
+    LoRa.receive();
+    return;
+  }
 
 
-    // =================================================
-    // LED OFF
-    // =================================================
+  // ===================================================
+  // READ TEMPERATURE
+  // ===================================================
 
-    delay(300);
+  Serial.println();
+  Serial.println("NODE 1 REQUESTED TEMPERATURE");
 
-    digitalWrite(RESPONSE_LED, LOW);
-
-    Serial.println("LED GPIO 16: OFF");
+  float temperature = dht.readTemperature();
 
 
-    // =================================================
-    // BACK TO RX
-    // =================================================
+  if (isnan(temperature)) {
+
+    Serial.println("ERROR: DHT11 reading failed.");
 
     LoRa.receive();
+    return;
   }
+
+
+  String data = String(temperature, 1);
+
+
+  Serial.print("Temperature: ");
+  Serial.print(data);
+  Serial.println(" C");
+
+
+  // ===================================================
+  // LED ON
+  // ===================================================
+
+  digitalWrite(RESPONSE_LED, HIGH);
+
+  Serial.println("LED GPIO 16: ON");
+
+
+  // ===================================================
+  // SEND RESPONSE TO NODE 1
+  // ===================================================
+
+  Serial.println();
+  Serial.println("---------- RESPONSE ----------");
+
+  Serial.print("Destination: 0x");
+
+  if (NODE1_ID < 16)
+    Serial.print("0");
+
+  Serial.println(NODE1_ID, HEX);
+
+
+  Serial.print("Sender: 0x");
+
+  if (NODE3_ID < 16)
+    Serial.print("0");
+
+  Serial.println(NODE3_ID, HEX);
+
+
+  Serial.print("TX Temperature: ");
+  Serial.print(data);
+  Serial.println(" C");
+
+
+  Serial.print("Message ID: ");
+  Serial.println(receivedID);
+
+
+  // ---------------------------------------------------
+  // Send packet
+  // ---------------------------------------------------
+
+  LoRa.idle();
+
+  LoRa.beginPacket();
+
+  // Destination = NODE 1
+  LoRa.write(NODE1_ID);
+
+  // Sender = NODE 3
+  LoRa.write(NODE3_ID);
+
+  // Keep original Master message ID
+  LoRa.write(receivedID);
+
+  // Temperature
+  LoRa.print(data);
+
+  LoRa.endPacket();
+
+
+  Serial.println("Response sent");
+
+
+  // ===================================================
+  // LED OFF
+  // ===================================================
+
+  delay(300);
+
+  digitalWrite(RESPONSE_LED, LOW);
+
+  Serial.println("LED GPIO 16: OFF");
+
+
+  // ===================================================
+  // RETURN TO RECEIVE MODE
+  // ===================================================
+
+  LoRa.receive();
 }

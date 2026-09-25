@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="en">
@@ -33,21 +34,26 @@
 
     <div class="brand">
 
-    <div class="logo">
-        <img src="/static/images/UhuTA.png" alt="MarsLink Logo">
-    </div>
-
-    <div>
-        <h1>
-            MarsLink
-        </h1>
-
-        <div class="subtitle">
-            LoRa Environmental Monitoring Network
+        <div class="logo">
+            <img
+                src="/static/images/UhuTA.png"
+                alt="MarsLink Logo"
+            >
         </div>
-    </div>
 
-</div>
+        <div>
+
+            <h1>
+                MarsLink
+            </h1>
+
+            <div class="subtitle">
+                LoRa Environmental Monitoring Network
+            </div>
+
+        </div>
+
+    </div>
 
 
     <div
@@ -193,6 +199,90 @@
     class="node-grid"
     id="nodes"
 ></div>
+
+
+<!-- =======================================================
+     CURRENT PATH
+======================================================== -->
+
+<div class="section-title">
+
+    <span>
+        Current Communication Path
+    </span>
+
+    <span
+        class="metric-label"
+        id="pathStatus"
+    >
+        WAITING FOR DATA
+    </span>
+
+</div>
+
+
+<section class="path-card">
+
+    <div class="path-header">
+
+        <div>
+
+            <div class="path-title">
+                LoRa Network Route
+            </div>
+
+            <div
+                class="path-description"
+                id="pathDescription"
+            >
+                Waiting for the Master to receive node data...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="path-display">
+
+        <div
+            class="path-placeholder"
+            id="pathPlaceholder"
+        >
+
+            <div class="path-placeholder-icon">
+                📡
+            </div>
+
+            <div>
+                Waiting for communication...
+            </div>
+
+        </div>
+
+
+        <img
+            id="currentPathImage"
+            class="path-image"
+            src=""
+            alt="Current communication path"
+        >
+
+    </div>
+
+
+    <div
+        class="path-route"
+        id="pathRoute"
+    >
+
+        MASTER
+        <span>→</span>
+        WAITING
+
+    </div>
+
+</section>
 
 
 <!-- =======================================================

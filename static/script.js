@@ -752,6 +752,162 @@ function renderNodes(
     }
 }
 
+// =========================================================
+// CURRENT COMMUNICATION PATH
+// =========================================================
+
+let currentPathNode = null;
+
+
+// =========================================================
+// UPDATE CURRENT PATH
+// =========================================================
+
+function updateCurrentPath(nodeID) {
+
+    const image =
+        document.getElementById(
+            "currentPathImage"
+        );
+
+    const placeholder =
+        document.getElementById(
+            "pathPlaceholder"
+        );
+
+    const status =
+        document.getElementById(
+            "pathStatus"
+        );
+
+    const description =
+        document.getElementById(
+            "pathDescription"
+        );
+
+    const route =
+        document.getElementById(
+            "pathRoute"
+        );
+
+
+    // -----------------------------------------------------
+    // NODE 1
+    // -----------------------------------------------------
+
+    if (nodeID === "BB") {
+
+        image.src =
+            "/static/images/node1.png";
+
+        image.alt =
+            "Current path to Node 1";
+
+        image.classList.add(
+            "visible"
+        );
+
+        placeholder.style.display =
+            "none";
+
+        status.textContent =
+            "NODE 1 ACTIVE";
+
+        description.textContent =
+            "Master is currently communicating with Node 1.";
+
+        route.innerHTML = `
+            MASTER
+            <span>→</span>
+            NODE 1
+        `;
+
+        currentPathNode =
+            "BB";
+
+        return;
+    }
+
+
+    // -----------------------------------------------------
+    // NODE 2
+    // -----------------------------------------------------
+
+    if (nodeID === "CC") {
+
+        image.src =
+            "/static/images/node2.png";
+
+        image.alt =
+            "Current path to Node 2";
+
+        image.classList.add(
+            "visible"
+        );
+
+        placeholder.style.display =
+            "none";
+
+        status.textContent =
+            "NODE 2 ACTIVE";
+
+        description.textContent =
+            "Master is currently communicating with Node 2.";
+
+        route.innerHTML = `
+            MASTER
+            <span>→</span>
+            NODE 2
+        `;
+
+        currentPathNode =
+            "CC";
+
+        return;
+    }
+
+
+    // -----------------------------------------------------
+    // NODE 3
+    // -----------------------------------------------------
+
+    if (nodeID === "DD") {
+
+        image.src =
+            "/static/images/node3.png";
+
+        image.alt =
+            "Current path to Node 3";
+
+        image.classList.add(
+            "visible"
+        );
+
+        placeholder.style.display =
+            "none";
+
+        status.textContent =
+            "NODE 3 RELAY ACTIVE";
+
+        description.textContent =
+            "Node 3 data is being relayed through Node 1.";
+
+        route.innerHTML = `
+            MASTER
+            <span>→</span>
+            NODE 1
+            <span>→</span>
+            NODE 3
+        `;
+
+        currentPathNode =
+            "DD";
+
+        return;
+    }
+}
+
+
 
 // =========================================================
 // LIVE API

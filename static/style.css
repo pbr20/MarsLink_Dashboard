@@ -936,3 +936,255 @@ button.primary {
             7px 9px;
     }
 }
+
+/* =========================================================
+   CURRENT COMMUNICATION PATH
+========================================================= */
+
+.path-card {
+
+    background: var(--panel);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 24px;
+
+    backdrop-filter: blur(15px);
+
+    box-shadow:
+        0 15px 50px
+        rgba(0,0,0,0.16);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   PATH HEADER
+========================================================= */
+
+.path-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 20px;
+}
+
+
+.path-title {
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+
+.path-description {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   PATH IMAGE AREA
+========================================================= */
+
+.path-display {
+
+    width: 100%;
+
+    min-height: 300px;
+
+    border-radius: 16px;
+
+    background:
+        rgba(255,255,255,0.025);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.06);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+
+.path-image {
+
+    display: none;
+
+    width: 100%;
+
+    max-height: 430px;
+
+    object-fit: contain;
+
+    border-radius: 14px;
+
+    animation:
+        pathFadeIn 0.4s ease;
+}
+
+
+.path-image.visible {
+
+    display: block;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.path-placeholder {
+
+    color: var(--muted);
+
+    text-align: center;
+
+    font-size: 14px;
+
+    padding: 40px;
+}
+
+
+.path-placeholder-icon {
+
+    font-size: 42px;
+
+    margin-bottom: 10px;
+
+    opacity: 0.7;
+}
+
+
+/* =========================================================
+   ROUTE TEXT
+========================================================= */
+
+.path-route {
+
+    margin-top: 18px;
+
+    padding: 13px 16px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(224,90,63,0.08);
+
+    border:
+        1px solid
+        rgba(224,90,63,0.18);
+
+    text-align: center;
+
+    color: var(--mars-light);
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 0.5px;
+}
+
+
+.path-route span {
+
+    margin:
+        0 10px;
+
+    color: var(--muted);
+
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   PATH ANIMATION
+========================================================= */
+
+@keyframes pathFadeIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            scale(1);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width: 650px) {
+
+    .path-card {
+
+        padding: 16px;
+
+    }
+
+
+    .path-display {
+
+        min-height: 220px;
+
+    }
+
+
+    .path-image {
+
+        max-height: 300px;
+
+    }
+
+
+    .path-title {
+
+        font-size: 17px;
+
+    }
+
+
+    .path-route {
+
+        font-size: 12px;
+
+    }
+
+}
