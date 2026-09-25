@@ -919,7 +919,10 @@ async function refresh() {
 
         const response =
             await fetch(
-                "/api/data"
+                "/api/data",
+                {
+                    cache: "no-store"
+                }
             );
 
 
@@ -943,12 +946,17 @@ async function refresh() {
         }
 
 
+        // -------------------------------------------------
+        // NETWORK SUMMARY
+        // -------------------------------------------------
+
         const online =
-            data.online_nodes;
+            data.online_nodes ?? 0;
 
 
         const total =
-            data.total_nodes;
+            data.total_nodes ??
+            Object.keys(data.nodes || {}).length;
 
 
         document.getElementById(
@@ -968,8 +976,12 @@ async function refresh() {
         document.getElementById(
             "lastUpdate"
         ).textContent =
-            data.time;
+            data.time ?? "--";
 
+
+        // -------------------------------------------------
+        // NETWORK STATUS PILL
+        // -------------------------------------------------
 
         const dot =
             document.getElementById(
@@ -1001,18 +1013,88 @@ async function refresh() {
         }
 
 
-        // Check node state changes
+        // -------------------------------------------------
+        // CHECK NODE EVENTS
+        // -------------------------------------------------
 
         checkNodeEvents(
             data.nodes
         );
 
 
-        // Render nodes
+        // -------------------------------------------------
+        // RENDER LIVE NODE CARDS
+        // -------------------------------------------------
 
         renderNodes(
             data.nodes
         );
+
+
+        // -------------------------------------------------
+        // FIND MOST RECENT RECEIVED NODE
+        // -------------------------------------------------
+        //
+        // Your Master currently generates:
+        //
+        // Node 3 -> MSG 45
+        // Node 1 -> MSG 46
+        // Node 2 -> MSG 47
+        //
+        // Therefore the largest message ID represents
+        // the latest packet received.
+        //
+        // -------------------------------------------------
+
+        let latestNode = null;
+
+        let latestMessage = -1;
+
+
+        for (
+            const [id, node]
+            of Object.entries(data.nodes)
+        ) {
+
+            if (
+                node.message_id === null ||
+                node.message_id === undefined
+            ) {
+
+                continue;
+            }
+
+
+            const messageNumber =
+                Number(
+                    node.message_id
+                );
+
+
+            if (
+                !Number.isNaN(messageNumber) &&
+                messageNumber > latestMessage
+            ) {
+
+                latestMessage =
+                    messageNumber;
+
+                latestNode =
+                    id;
+            }
+        }
+
+
+        // -------------------------------------------------
+        // UPDATE COMMUNICATION PATH
+        // -------------------------------------------------
+
+        if (latestNode) {
+
+            updateCurrentPath(
+                latestNode
+            );
+        }
 
 
     } catch (error) {
@@ -1035,7 +1117,6 @@ async function refresh() {
         );
     }
 }
-
 
 // =========================================================
 // HISTORY
