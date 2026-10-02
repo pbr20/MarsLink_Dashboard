@@ -35,7 +35,7 @@ const unsigned long RESPONSE_TIMEOUT = 2000;
 
 // Time between Node 1 -> Node 2 -> Node 3
 // CHANGE THIS VALUE TO TEST DIFFERENT INTERVALS
-const unsigned long NODE_INTERVAL = 5000;
+const unsigned long NODE_INTERVAL = 10000;
 
 
 // =====================================================
