@@ -202,6 +202,36 @@
 
 
 <!-- =======================================================
+     PREDICTIVE ANALYTICS
+======================================================== -->
+
+<section class="forecast-section" aria-labelledby="forecastTitle">
+    <div class="section-title">
+        <span id="forecastTitle">AI Environmental Forecast</span>
+        <span class="metric-label">10-MINUTE SENSOR OUTLOOK</span>
+    </div>
+
+    <div class="forecast-intro">
+        <div>
+            <h3>Predictive Sensor Intelligence <span class="forecast-ai-pill">ML</span></h3>
+            <p>Time-series regression trained on this network's real temperature and dust measurements.
+               Predictions are experimental and are not official weather forecasts.</p>
+        </div>
+        <button class="primary" id="refreshForecast" type="button">Update Forecast</button>
+    </div>
+
+    <p class="forecast-global-status" id="forecastStatus" role="status" aria-live="polite">
+        Checking available training data…
+    </p>
+    <div class="forecast-grid" id="forecastGrid"></div>
+
+    <p class="forecast-footnote">A model needs roughly 80–100 minutes of continuous readings and is
+       tested against a no-change baseline using later observations. If the model performs worse,
+       the dashboard labels and uses the simpler baseline. Missing or stale readings are never invented.</p>
+</section>
+
+
+<!-- =======================================================
      CURRENT PATH
 ======================================================== -->
 

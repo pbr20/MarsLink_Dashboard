@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, render_template, request
 import os
 import time
+from threading import Lock
+from forecast import forecast_metric
 from datetime import datetime, timezone, timedelta
 
 import psycopg
@@ -533,6 +535,59 @@ def api_data():
         return jsonify({
             "error": str(e)
         }), 500
+
+
+# ---------------------------------------------------------
+# MACHINE LEARNING: SHORT-TERM SENSOR FORECASTS
+# ---------------------------------------------------------
+
+# Cache both database aggregation and the model evaluation for 60 seconds.
+# This is per web worker; it avoids fitting a model on every browser refresh.
+_forecast_lock = Lock()
+_forecast_cache = {"updated": 0.0, "payload": None}
+
+
+@app.route("/api/forecast")
+def api_forecast():
+    with _forecast_lock:
+        if _forecast_cache["payload"] is not None and time.monotonic() - _forecast_cache["updated"] < 60:
+            return jsonify(_forecast_cache["payload"])
+
+        try:
+            payload = {"nodes": {}, "horizon_minutes": 10}
+            current_time = datetime.now(timezone.utc)
+            with get_db() as conn:
+                with conn.cursor() as cur:
+                    for node_id, info in NODE_INFO.items():
+                        # Aggregate by minute in PostgreSQL. The existing index on
+                        # node_id/timestamp keeps the query constrained to 24 hours.
+                        cur.execute("""
+                            SELECT date_trunc('minute', timestamp) AS bucket,
+                                   AVG(temperature) FILTER (
+                                       WHERE temperature BETWEEN -150 AND 150
+                                   ) AS temperature,
+                                   AVG(dust) FILTER (
+                                       WHERE dust BETWEEN 0 AND 50000
+                                   ) AS dust
+                            FROM sensor_data
+                            WHERE node_id = %s
+                              AND timestamp >= %s
+                            GROUP BY 1
+                            ORDER BY 1
+                        """, (node_id, current_time - timedelta(hours=24)))
+                        rows = cur.fetchall()
+                        payload["nodes"][node_id] = {
+                            "name": info["name"],
+                            "temperature": forecast_metric(rows, "temperature", current_time),
+                            "dust": forecast_metric(rows, "dust", current_time),
+                        }
+
+            _forecast_cache["payload"] = payload
+            _forecast_cache["updated"] = time.monotonic()
+            return jsonify(payload)
+        except Exception:
+            app.logger.exception("Forecast request failed")
+            return jsonify({"error": "Forecast service is temporarily unavailable"}), 503
 
 
 # ---------------------------------------------------------

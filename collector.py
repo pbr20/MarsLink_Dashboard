@@ -9,7 +9,7 @@ import requests
 # CONFIGURATION
 # =========================================================
 
-SERIAL_PORT = "COM9"
+SERIAL_PORT = "COM6"
 BAUD_RATE = 115200
 
 # Put your Render URL here after deployment
